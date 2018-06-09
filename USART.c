@@ -7,6 +7,7 @@
  */
 
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "USART.h"
 #include <util/setbaud.h>
 
@@ -20,8 +21,9 @@ void initUSART(void) {
 	UCSR0A &= ~(1<<U2X0);
 	#endif
 
-	UCSR0B = (1<<RXEN0) | (1<<TXEN0);
-	UCSR0C = (1<<UCSZ01) | (1<<UCSZ00);
+	UCSR0B |= (1<<RXCIE0);
+	UCSR0B |= (1<<RXEN0) | (1<<TXEN0);
+	UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);
 }
 
 void transmitByte(uint8_t byte) {
@@ -32,4 +34,11 @@ void transmitByte(uint8_t byte) {
 char receiveByte(void) {
 	while (!(UCSR0A & (1<<RXC0))); //wait to receive byte
 	return UDR0;
+}
+
+void printString(char* string) {
+	int len = strlen(string);
+	for(int i = 0; i < len; i++) {
+		transmitByte(string[i]);
+	}
 }

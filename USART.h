@@ -21,3 +21,8 @@ void transmitByte(uint8_t byte);
  * receiveByte: returns a byte receieved by the USART peripheral
  */
 char receiveByte(void);
+
+/*
+ * printString: transmits each byte in a string
+ */
+void printString(char* string);

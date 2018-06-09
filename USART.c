@@ -11,19 +11,31 @@
 #include "USART.h"
 #include <util/setbaud.h>
 
-void initUSART(void) {
-	UBRR0H = UBRRH_VALUE;
-	UBRR0L = UBRRL_VALUE;
+int initUSART(int clock_speed) {
 
-	#if USE_2X
-	UCSR0A |= (1<<U2X0);
-	#else
+	if (clock_speed == 1) {
+		UBRR0 = 6;
+	}
+	else if (clock_speed == 8) {
+		UBRR0 = 53;
+	}
+	else {
+		return -1;
+	}
+		
+
+	//#if USE_2X
+	//UCSR0A |= (1<<U2X0);
+	//#else
 	UCSR0A &= ~(1<<U2X0);
-	#endif
+	//#endif
 
 	UCSR0B |= (1<<RXCIE0);
 	UCSR0B |= (1<<RXEN0) | (1<<TXEN0);
 	UCSR0C |= (1<<UCSZ01) | (1<<UCSZ00);
+
+	sei();
+	return 0;
 }
 
 void transmitByte(uint8_t byte) {

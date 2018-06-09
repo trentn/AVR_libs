@@ -9,8 +9,10 @@
 
 /*
  * initUSART: initializes the USART peripheral
+ * param: clock_speed is either 1 (Mhz) or 8 (Mhz)
+ * returns 0 on success
  */
-void initUSART(void);
+int initUSART(int clock_speed);
 
 /*
  * transmitByte: sends a byte via the USART peripheral

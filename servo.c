@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include "servo.h"
 
-char servo_angles[8] = {7, 7, 7, 7, 7, 7, 7 ,7};
+char servo_angles[8] = {17, 17, 17, 17, 17, 17, 17, 17};
 char servos = 0;
 
 void initServoTimer(int tick_rate) {

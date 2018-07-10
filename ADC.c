@@ -8,14 +8,20 @@
 #include <avr/io.h>
 
 
+int initADC(int pin) {
+	if(pin > 5) {
+		return -1;
+	}	
 
-void initADC() {
-	
-	ADMUX &= ~0x0f;		//MUXn bits 0-3;
+	ADMUX &= ~0x0f;		//MUXn bits 0-3
+	ADMUX |= pin;		//set pin
+
 	ADMUX |= (1 << 5);	//ADLAR is bit 5
-	ADMUX |= (1 << 6);	//refernce voltage
-	ADMUX &= ~(1 << 7);
 
+
+	//set reference voltage to AVcc
+	ADMUX |= (1 << 6);
+	ADMUX &= ~(1 << 7);
 
 
 	ADCSRB &= ~0x07;	//Free running mode
@@ -26,4 +32,8 @@ void initADC() {
 	ADCSRA |= 0x03;		//setting prescaler
 	ADCSRA &= ~(1 << 2);	//setting prescaler
 	ADCSRA |= (1 << 6);	//start first conversion
+}
+
+int getConversion(void) {
+	return (int)ADCH;
 }

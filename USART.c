@@ -8,8 +8,10 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "USART.h"
 #include <util/setbaud.h>
+
+#include "USART.h"
+#include "utils.h"
 
 int initUSART(int clock_speed) {
 

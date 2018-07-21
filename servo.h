@@ -1,9 +1,48 @@
+/**
+ * @brief header file for servo functions
+ * 
+ * @file servo.h
+ * @author Trent Novelly
+ */
+
+/**
+ * @brief Initialize the timer to count at a 
+ * 			rate of 500 kHz (clock tick time 1 microsecond)
+ * 			The timer should reset after 100 microseconds
+ * 
+ */
 void initServoTimer(void);
 
+/**
+ * @brief Registers that a servo signal wire is connected
+ * 			and enables the appropriate pin as output
+ * 
+ * @param pin PORTB pin that the servo signal is connected to
+ */
 void registerServo(int pin);
 
+/**
+ * @brief Set the Servo Angle
+ * 
+ * @param servo is the desired servo to set
+ * @param angle is the angle to set the desired servo to
+ */
 void setServoAngle(int servo, char angle);
 
+/**
+ * @brief Get the Servo Angle
+ * 
+ * @param servo is the desired servo angle to read
+ * @return char is the servo angle (in pulse width time/100)
+ */
 char getServoAngle(int servo);
+
+/**
+ * @brief sets all servo outputs when the counter is 0
+ * 			and unsets any servo output whose pwm "angle"
+ * 			is equal to the counter
+ * 
+ * @param pwm_counter is the current counter value.
+ */
 
 void pinControl(int pwm_counter);

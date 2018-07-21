@@ -1,3 +1,11 @@
+/**
+ * @brief Servo control library
+ * 
+ * @file servo.c
+ * @author Trent Novelly
+ */
+
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "servo.h"
@@ -9,18 +17,33 @@ char servos = 0;
 
 
 int pwm_counter = 0;
+
+/**
+ * @brief Interrupt every time the timer resets
+ * 			and check if a servo output needs to be toggled
+ * 
+ */
 ISR(TIMER1_COMPA_vect) {
         pwm_counter = (pwm_counter + 1)%200;
 
         pinControl(pwm_counter);
 }
 
+
 void initServoTimer() {
+	//configure timer to Clear Timer on Compare match mode (CTC)
 	TCCR1B |= (1 << WGM12);
+
+	//prescale timer to clock/8
 	TCCR1B |= (1 << CS11);
+
+	//enable output compare A match interrupt
 	TIMSK1 |= (1 << 1);
 
+	//set output compare register to tick rate (should be 100)
 	OCR1A = TICK_RATE;
+	
+	//ensure interrupts are enabled
 	sei();
 }
 
@@ -38,9 +61,12 @@ void setServoAngle(int servo, char angle) {
 }
 
 char getServoAngle(int servo) {
+	//TODO: convert PWM width to degrees
+
 	return servo_angles[servo];
 }
 
+//TODO: pwm_counter probably can be read as global variable (may need to consider race conditions)
 void pinControl(int pwm_counter) {
 	if(pwm_counter == 0) {
 		PORTB = servos;

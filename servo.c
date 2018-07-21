@@ -10,8 +10,6 @@
 #include <avr/interrupt.h>
 #include "servo.h"
 
-#define TICK_RATE 100
-
 char servo_angles[8] = {17, 17, 17, 17, 17, 17, 17, 17};
 char servos = 0;
 
@@ -23,7 +21,7 @@ int pwm_counter = 0;
  * 			and check if a servo output needs to be toggled
  * 
  */
-ISR(TIMER1_COMPA_vect) {
+ISR(TIMERn_COMPA_vect) {
         pwm_counter = (pwm_counter + 1)%200;
 
         pinControl(pwm_counter);
@@ -32,16 +30,21 @@ ISR(TIMER1_COMPA_vect) {
 
 void initServoTimer() {
 	//configure timer to Clear Timer on Compare match mode (CTC)
+	//this varies depending on which timer is being used
+	#if defined (__SERVO_TIMER0__)
+	TCCR0A |= (1 << WGM01);
+	#elif defined (__SERVO_TIMER1__)
 	TCCR1B |= (1 << WGM12);
+	#endif
 
 	//prescale timer to clock/8
-	TCCR1B |= (1 << CS11);
+	TCCRnB |= (1 << CSn1);
 
 	//enable output compare A match interrupt
-	TIMSK1 |= (1 << 1);
+	TIMSKn |= (1 << 1);
 
 	//set output compare register to tick rate (should be 100)
-	OCR1A = TICK_RATE;
+	OCRnA = TICK_RATE;
 	
 	//ensure interrupts are enabled
 	sei();

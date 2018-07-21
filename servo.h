@@ -4,6 +4,33 @@
  * @file servo.h
  * @author Trent Novelly
  */
+#ifndef SERVO_H
+#define SERVO_H
+
+#if defined(__SERVO_TIMER0__)
+
+#   define TCCRnB TCCR0B
+#   define TIMSKn TIMSK0
+#   define OCRnA  OCR0A
+#   define CSn1   CS01
+#   define TIMERn_COMPA_vect TIMER0_COMPA_vect
+
+#elif defined (__SERVO_TIMER1__)
+
+#   define TCCRnB TCCR1B
+#   define TIMSKn TIMSK1
+#   define OCRnA  OCR1A
+#   define CSn1   CS11
+#   define TIMERn_COMPA_vect TIMER1_COMPA_vect
+
+#endif
+
+
+/**
+ * @brief Number of clock ticks to reset timer
+ * 
+ */
+#define TICK_RATE 100
 
 /**
  * @brief Initialize the timer to count at a 
@@ -46,3 +73,6 @@ char getServoAngle(int servo);
  */
 
 void pinControl(int pwm_counter);
+
+
+#endif

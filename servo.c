@@ -50,9 +50,29 @@ void initServoTimer() {
 	sei();
 }
 
-void registerServo(int pin) {
-	DDRB |= (1 << pin);
-	servos |= (1 << pin);
+void registerServo(int servo_num) {
+	switch(servo_num) {
+		case 0: DDRB |= (1 << 0);
+				break;
+		case 1: DDRB |= (1 << 1);
+				break;
+		case 2: DDRD |= (1 << 4);
+				break;
+		case 3: DDRD |= (1 << 5);
+				break;
+		case 4: DDRD |= (1 << 6);
+				break;
+		case 5: DDRD |= (1 << 7);
+				break;
+		case 6: DDRB |= (1 << 6);
+				break;
+		case 7: DDRB |= (1 << 7);
+				break;
+		default: break;
+	}
+	if (servo_num >= 0 && servo_num <= 7) {
+		servos |= (1 << servo_num);
+	}
 }
 
 void setServoAngle(int servo, char angle) {
@@ -72,9 +92,16 @@ char getServoAngle(int servo) {
 //TODO: pwm_counter probably can be read as global variable (may need to consider race conditions)
 void pinControl(int pwm_counter) {
 	if(pwm_counter == 0) {
-		PORTB = servos;
+		//mask out middle bits, which represent the servos on PD pins
+		char b_temp = servos & 0xc3;
+		PORTB |= b_temp;
+
+		//mask out the PB pins, and shift to account for using last 4 PD pins (and not the middle ones)
+		char d_temp = (servos & 0x3c) << 2;
+		PORTD |= d_temp;
 	}
 
+	//TODO: convert hardcoded values to macros (to retain optimization but increase readability)
 	if((servos & 0x01) == 0x01 && pwm_counter == servo_angles[0]) {
 		PORTB &= 0xfe;
 	}
@@ -82,16 +109,16 @@ void pinControl(int pwm_counter) {
 		PORTB &= 0xfd;
 	}
 	if((servos & 0x04) == 0x04 && pwm_counter == servo_angles[2]) {
-		PORTB &= 0xfb;
+		PORTD &= 0xef;
 	}
 	if((servos & 0x08) == 0x08 && pwm_counter == servo_angles[3]) {
-		PORTB &= 0xf7;
+		PORTD &= 0xdf;
 	}
 	if((servos & 0x10) == 0x10 && pwm_counter == servo_angles[4]) {
-		PORTB &= 0xef;
+		PORTD &= 0xbf;
 	}
 	if((servos & 0x20) == 0x20 && pwm_counter == servo_angles[5]) {
-		PORTB &= 0xdf;
+		PORTD &= 0x7f;
 	}
 	if((servos & 0x40) == 0x40 && pwm_counter == servo_angles[6]) {
 		PORTB &= 0xbf;
